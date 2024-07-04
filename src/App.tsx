@@ -1,35 +1,66 @@
-import React, { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { Component } from 'react';
+
+import SearchBar from './components/SearchBar';
+import ResultsList from './components/SearchResults';
+import ErrorBoundary from './components/ErrorBoundary';
+
+import { ResultItem } from './types/ResultItem';
 import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0);
+interface AppState {
+  results: ResultItem[];
+  loading: boolean;
+}
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
+class App extends Component<object, AppState> {
+  constructor(props: object) {
+    super(props);
+    this.state = {
+      results: [],
+      loading: false,
+    };
+  }
+
+  componentDidMount() {
+    this.fetchData(localStorage.getItem('searchTerm') || '');
+  }
+
+  fetchData = (term: string) => {
+    this.setState({ loading: true });
+    const url = term
+      ? `https://swapi.dev/api/starships/?search=${term}`
+      : `https://swapi.dev/api/starships/`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({ results: data.results, loading: false });
+        console.log('Data:', data.results);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        this.setState({ loading: false });
+      });
+  };
+
+  handleSearch = (term: string) => {
+    this.fetchData(term);
+  };
+
+  render() {
+    return (
+      <ErrorBoundary>
+        <div className="container">
+          <h1>StarShips From StarWars</h1>
+          <SearchBar onSearch={this.handleSearch} />
+          {this.state.loading ? (
+            <div>Loading...</div>
+          ) : (
+            <ResultsList results={this.state.results} />
+          )}
+        </div>
+      </ErrorBoundary>
+    );
+  }
 }
 
 export default App;
