@@ -1,4 +1,4 @@
-export interface ResultItem {
+export interface IStarship {
   name: string;
   model: string;
   starship_class: string;

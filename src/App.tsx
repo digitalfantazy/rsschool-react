@@ -1,14 +1,16 @@
 import { Component } from 'react';
 
-import SearchBar from './components/SearchBar';
-import ResultsList from './components/SearchResults';
-import ErrorBoundary from './components/ErrorBoundary';
+import SearchBar from './components/searchBar/SearchBar';
+import ResultsList from './components/searchResults/SearchResults';
+import ErrorBoundary from './components/errorBoundary/ErrorBoundary';
+import Loading from './components/loading/loading';
 
-import { ResultItem } from './types/ResultItem';
+import { IStarship } from './types/StarshipType';
+import { getStarships } from './api/getStarships';
 import './App.css';
 
 interface AppState {
-  results: ResultItem[];
+  starship: IStarship[];
   loading: boolean;
 }
 
@@ -16,34 +18,19 @@ class App extends Component<object, AppState> {
   constructor(props: object) {
     super(props);
     this.state = {
-      results: [],
+      starship: [],
       loading: false,
     };
   }
 
-  componentDidMount() {
-    this.fetchData(localStorage.getItem('searchTerm') || '');
-  }
-
-  fetchData = (term: string) => {
+  getData = async (query: string) => {
     this.setState({ loading: true });
-    const url = term
-      ? `https://swapi.dev/api/starships/?search=${term}`
-      : `https://swapi.dev/api/starships/`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState({ results: data.results, loading: false });
-        console.log('Data:', data.results);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        this.setState({ loading: false });
-      });
+    const data = await getStarships(query);
+    this.setState({ starship: data.results, loading: false });
   };
 
-  handleSearch = (term: string) => {
-    this.fetchData(term);
+  handleSearch = (query: string) => {
+    this.getData(query);
   };
 
   render() {
@@ -52,11 +39,7 @@ class App extends Component<object, AppState> {
         <div className="container">
           <h1>StarShips From StarWars</h1>
           <SearchBar onSearch={this.handleSearch} />
-          {this.state.loading ? (
-            <div>Loading...</div>
-          ) : (
-            <ResultsList results={this.state.results} />
-          )}
+          {this.state.loading ? <Loading /> : <ResultsList results={this.state.starship} />}
         </div>
       </ErrorBoundary>
     );
