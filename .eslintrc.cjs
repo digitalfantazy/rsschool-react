@@ -1,3 +1,5 @@
+const { version } = require('react');
+
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
@@ -12,6 +14,11 @@ module.exports = {
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh', 'react-compiler', '@typescript-eslint'],
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     '@typescript-eslint/no-unused-vars': 'warn',
