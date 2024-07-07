@@ -1,4 +1,5 @@
-import { Component, ReactNode } from 'react';
+import { Component, ReactNode, ErrorInfo } from 'react';
+import './ErrorBoundary.css';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -15,23 +16,17 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    if (error) {
-      console.log(error.message);
-      return { hasError: true };
-    }
-    return { hasError: false };
+    return { hasError: true };
   }
-
-  handleError = () => {
-    throw new Error('Test error');
-  };
-
+  componentDidCatch(error: Error, info: ErrorInfo): void {
+    console.log('Error caught by ErrorBoundary: ', error, info);
+  }
   render() {
     if (this.state.hasError) {
       return (
-        <div>
-          <h1>Something went wrong.</h1>
-          <button onClick={this.handleError}>Throw Error</button>
+        <div className="error-boundary">
+          <h1>Oops.... Something went wrong.</h1>
+          <button onClick={() => this.setState({ hasError: false })}>Try again</button>
         </div>
       );
     }

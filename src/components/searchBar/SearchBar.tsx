@@ -1,4 +1,4 @@
-import { Component, ChangeEvent } from 'react';
+import { Component, ChangeEvent, KeyboardEvent } from 'react';
 import './searchbar.css';
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -12,7 +12,6 @@ interface SearchBarState {
 class SearchBar extends Component<SearchBarProps, SearchBarState> {
   constructor(props: SearchBarProps) {
     super(props);
-    // const savedTerm = localStorage.getItem('searchTerm') || '';
     this.state = { query: '', error: false };
   }
 
@@ -20,9 +19,8 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
     const queryString = localStorage.getItem('searchTerm');
     if (queryString) {
       this.setState({ query: queryString });
-    } else {
-      this.props.onSearch(queryString ? queryString : '');
     }
+    this.props.onSearch(queryString ? queryString : '');
   }
 
   handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -35,11 +33,33 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
     this.props.onSearch(trimmedQuery);
   };
 
+  handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      this.handleSearch();
+    }
+  };
+
+  handleError = () => {
+    this.setState({ error: true });
+  };
+
   render() {
+    if (this.state.error) {
+      throw new Error('Test Error occurred');
+    }
     return (
       <div className="search-bar">
-        <input type="text" value={this.state.query} onChange={this.handleChange} />
-        <button onClick={this.handleSearch}>Search</button>
+        <input
+          type="text"
+          placeholder="Search"
+          value={this.state.query}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
+        />
+        <button onClick={this.handleSearch} type="submit">
+          Search
+        </button>
+        <button onClick={this.handleError}>Throw Error</button>
       </div>
     );
   }

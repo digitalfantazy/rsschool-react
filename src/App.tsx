@@ -35,13 +35,13 @@ class App extends Component<object, AppState> {
 
   render() {
     return (
-      <ErrorBoundary>
-        <div className="container">
+      <div className="container">
+        <ErrorBoundary>
           <h1>StarShips From StarWars</h1>
           <SearchBar onSearch={this.handleSearch} />
           {this.state.loading ? <Loading /> : <ResultsList results={this.state.starship} />}
-        </div>
-      </ErrorBoundary>
+        </ErrorBoundary>
+      </div>
     );
   }
 }
