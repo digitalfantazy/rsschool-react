@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 
 import SearchBar from './components/searchBar/SearchBar';
 import ResultsList from './components/searchResults/SearchResults';
@@ -9,41 +9,30 @@ import { IStarship } from './types/StarshipType';
 import { getStarships } from './api/getStarships';
 import './App.css';
 
-interface AppState {
-  starship: IStarship[];
-  loading: boolean;
-}
+const App: React.FC = () => {
+  const [starship, setStarship] = useState<IStarship[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-class App extends Component<object, AppState> {
-  constructor(props: object) {
-    super(props);
-    this.state = {
-      starship: [],
-      loading: false,
-    };
-  }
-
-  getData = async (query: string) => {
-    this.setState({ loading: true });
+  const getData = async (query: string) => {
+    setLoading(true);
     const data = await getStarships(query);
-    this.setState({ starship: data.results, loading: false });
+    setStarship(data.results);
+    setLoading(false);
   };
 
-  handleSearch = (query: string) => {
-    this.getData(query);
+  const handleSearch = (query: string) => {
+    getData(query);
   };
 
-  render() {
-    return (
-      <div className="container">
-        <ErrorBoundary>
-          <h1>StarShips From StarWars</h1>
-          <SearchBar onSearch={this.handleSearch} />
-          {this.state.loading ? <Loading /> : <ResultsList results={this.state.starship} />}
-        </ErrorBoundary>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="container">
+      <ErrorBoundary>
+        <h1>StarShips From StarWars</h1>
+        <SearchBar onSearch={handleSearch} />
+        {loading ? <Loading /> : <ResultsList results={starship} />}
+      </ErrorBoundary>
+    </div>
+  );
+};
 
 export default App;

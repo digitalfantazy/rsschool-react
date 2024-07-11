@@ -1,68 +1,61 @@
-import { Component, ChangeEvent, KeyboardEvent } from 'react';
+import { ChangeEvent, KeyboardEvent, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import useSearchQuery from '../../hooks/useSearchQuery';
 import './searchbar.css';
 interface SearchBarProps {
   onSearch: (query: string) => void;
 }
 
-interface SearchBarState {
-  query: string;
-  error: boolean;
-}
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [localData, setlocalData] = useSearchQuery('query', () => '');
+  const [error, setError] = useState<boolean>(false);
 
-class SearchBar extends Component<SearchBarProps, SearchBarState> {
-  constructor(props: SearchBarProps) {
-    super(props);
-    this.state = { query: '', error: false };
-  }
+  useEffect(() => {
+    onSearch(localData);
+  }, []);
 
-  componentDidMount(): void {
-    const queryString = localStorage.getItem('searchTerm');
-    if (queryString) {
-      this.setState({ query: queryString });
-    }
-    this.props.onSearch(queryString ? queryString : '');
-  }
-
-  handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ query: event.target.value });
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setlocalData(event.target.value);
   };
 
-  handleSearch = () => {
-    const trimmedQuery = this.state.query.trim();
-    localStorage.setItem('searchTerm', trimmedQuery);
-    this.props.onSearch(trimmedQuery);
+  const handleSearch = () => {
+    const query = localData.trim();
+    setlocalData(query);
+    onSearch(query);
   };
 
-  handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      this.handleSearch();
+      handleSearch();
     }
   };
 
-  handleError = () => {
-    this.setState({ error: true });
+  const handleError = () => {
+    setError(true);
   };
 
-  render() {
-    if (this.state.error) {
-      throw new Error('Test Error occurred');
-    }
-    return (
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search"
-          value={this.state.query}
-          onChange={this.handleChange}
-          onKeyDown={this.handleKeyDown}
-        />
-        <button onClick={this.handleSearch} type="submit">
-          Search
-        </button>
-        <button onClick={this.handleError}>Throw Error</button>
-      </div>
-    );
+  if (error) {
+    throw new Error('Test Error occurred');
   }
-}
+  return (
+    <div className="search-bar">
+      <input
+        type="text"
+        placeholder="Search"
+        value={localData}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+      />
+      <button onClick={handleSearch} type="submit">
+        Search
+      </button>
+      <button onClick={handleError}>Throw Error</button>
+    </div>
+  );
+};
+
+SearchBar.propTypes = {
+  onSearch: PropTypes.func.isRequired,
+};
 
 export default SearchBar;
