@@ -1,26 +1,31 @@
 import { ChangeEvent, KeyboardEvent, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import useSearchQuery from '../../hooks/useSearchQuery';
+
 import './searchbar.css';
 interface SearchBarProps {
   onSearch: (query: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [localData, setlocalData] = useSearchQuery('query', () => '');
+  const [query, setQuery] = useSearchQuery('query', '');
   const [error, setError] = useState<boolean>(false);
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
-    onSearch(localData);
-  }, []);
+    if (!initialized) {
+      onSearch(query);
+      setInitialized(true);
+    }
+  }, [initialized, query, onSearch]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setlocalData(event.target.value);
+    setQuery(event.target.value);
   };
 
   const handleSearch = () => {
-    const query = localData.trim();
-    setlocalData(query);
+    const queryTrim = query.trim();
+    setQuery(queryTrim);
     onSearch(query);
   };
 
@@ -42,7 +47,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       <input
         type="text"
         placeholder="Search"
-        value={localData}
+        value={query}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
       />

@@ -1,0 +1,17 @@
+.error_page {
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.error-page button {
+  width: 150px;
+}
+
+.link {
+  color: aliceblue;
+  text-decoration: none;
+}
