@@ -13,7 +13,6 @@ const useSearchQuery = (key: string, initialValue: string): IUseSearchQuery => {
     return () => {
       localStorage.removeItem(value);
     };
-    // eslint-disable-next-line
   }, [key, value]);
 
   return [value, setValue];

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
 import { IRecipe } from '../../types/RecipeTypes';
@@ -8,15 +7,16 @@ import styles from './ResultList.module.css';
 interface ResultsListProps {
   results: IRecipe[];
   setIsDetailsOpen: (isOpen: boolean) => void;
+  isDetailsOpen: boolean;
 }
 
-const ResultsList: React.FC<ResultsListProps> = ({ results, setIsDetailsOpen }) => {
+const ResultsList: React.FC<ResultsListProps> = ({ results, setIsDetailsOpen, isDetailsOpen }) => {
   const [urlParams] = useSearchParams();
   const query = urlParams.get('search') || '';
   const page = urlParams.get('page') || '';
 
   return (
-    <div className={`${styles.content}`}>
+    <div className={`${styles.content} ${isDetailsOpen ? styles.open : ''}`}>
       <div className={styles.results}>
         <ul className={styles.results_list}>
           {results.length > 0 ? (
@@ -47,6 +47,7 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, setIsDetailsOpen }) 
 ResultsList.propTypes = {
   results: PropTypes.array.isRequired,
   setIsDetailsOpen: PropTypes.func.isRequired,
+  isDetailsOpen: PropTypes.bool.isRequired,
 };
 
 export default ResultsList;

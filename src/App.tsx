@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import SearchBar from './components/searchBar/SearchBar';
 import ResultsList from './components/ResultList/ResultList';
@@ -30,6 +30,14 @@ const App: React.FC = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    if (location.pathname.includes('/details/')) {
+      setIsDetailsOpen(true);
+    } else {
+      setIsDetailsOpen(false);
+    }
+  }, [location]);
+
   return (
     <div className={styles.container}>
       <ErrorBoundary>
@@ -39,16 +47,21 @@ const App: React.FC = () => {
           totalPages={totalPages}
           setCurrentPage={setCurrentPage}
           currentPage={currentPage}
+          setIsDetailsOpen={setIsDetailsOpen}
         />
         <div className={`${styles.mainContent} ${isDetailsOpen ? styles.shifted : ''}`}>
           {loading ? (
             <Loading />
           ) : (
             <>
-              <ResultsList results={recipes} setIsDetailsOpen={setIsDetailsOpen} />
+              <ResultsList
+                results={recipes}
+                setIsDetailsOpen={setIsDetailsOpen}
+                isDetailsOpen={isDetailsOpen}
+              />
             </>
           )}
-          <Outlet context={{ setIsDetailsOpen }} />
+          <Outlet context={{ isDetailsOpen, setIsDetailsOpen }} />
         </div>
       </ErrorBoundary>
     </div>

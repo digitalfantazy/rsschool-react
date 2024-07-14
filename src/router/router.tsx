@@ -4,7 +4,7 @@ import RecipeDetails from '../components/RecipeDetails/RecipeDetails';
 import NotFound from './notFoundPage/NotFound';
 import ErrorPage from './notFoundPage/NotFound';
 
-export const router = createBrowserRouter([
+export const routes = [
   {
     path: '/',
     element: <App />,
@@ -20,4 +20,6 @@ export const router = createBrowserRouter([
     path: '*',
     element: <NotFound />,
   },
-]);
+];
+
+export const router = createBrowserRouter(routes);

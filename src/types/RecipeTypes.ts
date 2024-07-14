@@ -13,6 +13,7 @@ export interface IRecipeDetails extends IRecipe {
   cookTimeMinutes: number;
   ingredients: string[];
   instructions: string[];
+  message: string;
 }
 
 export interface IRecipeData {

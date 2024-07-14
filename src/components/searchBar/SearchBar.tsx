@@ -11,6 +11,7 @@ interface SearchBarProps {
   totalPages: number;
   setCurrentPage: (page: number) => void;
   currentPage: number;
+  setIsDetailsOpen: (isOpen: boolean) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -18,6 +19,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   totalPages,
   setCurrentPage,
   currentPage,
+  setIsDetailsOpen,
 }) => {
   const [query, setQuery] = useSearchQuery('query', '');
   const [error, setError] = useState<boolean>(false);
@@ -47,6 +49,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       page: currentPage.toString(),
       search: queryTrim,
     });
+    localStorage.setItem('searchString', queryTrim);
     getRecipes(queryTrim, currentPage);
   };
 
@@ -94,6 +97,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           ChangePage={handlePageChange}
           currentPage={currentPage}
           totalPages={totalPages}
+          setIsDetailsOpen={setIsDetailsOpen}
         ></Pagination>
       )}
     </>
@@ -105,6 +109,7 @@ SearchBar.propTypes = {
   totalPages: PropTypes.number.isRequired,
   setCurrentPage: PropTypes.func.isRequired,
   currentPage: PropTypes.number.isRequired,
+  setIsDetailsOpen: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

@@ -23,6 +23,7 @@ module.exports = {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     '@typescript-eslint/no-unused-vars': 'warn',
     'react-compiler/react-compiler': 'error',
+    'react-hooks/exhaustive-deps': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
     'prettier/prettier': [
       'warn',
