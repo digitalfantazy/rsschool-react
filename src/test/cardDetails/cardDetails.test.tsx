@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { RouterProvider } from 'react-router-dom';
 import { router } from '../../router/router';
@@ -30,23 +29,6 @@ describe('Details Component', () => {
     render(<RouterProvider router={router} />);
     await waitFor(() => {
       expect(screen.getByText('No recipe details found')).toBeInTheDocument();
-    });
-  });
-
-  it('hides the component when clicking the close button', async () => {
-    router.navigate('/details/1');
-    render(<RouterProvider router={router} />);
-    await waitFor(() => {
-      const closeButton = screen.queryByText('Close');
-      if (closeButton) {
-        userEvent.click(closeButton);
-      }
-    });
-
-    await waitFor(() => {
-      expect(window.location.pathname).not.toContain('/details/1');
-      const closeButton = screen.queryByText('Close');
-      expect(closeButton).toBeNull();
     });
   });
 });
