@@ -9,8 +9,9 @@ const useSearchQuery = (key: string, initialValue: string): IUseSearchQuery => {
   });
 
   useEffect(() => {
+    localStorage.setItem(key, value);
     return () => {
-      localStorage.setItem(key, value);
+      localStorage.removeItem(value);
     };
     // eslint-disable-next-line
   }, [key, value]);

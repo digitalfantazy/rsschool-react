@@ -1,14 +1,13 @@
-import { Link } from 'react-router-dom';
-import styles from './errorPage.module.css';
+import { useNavigate } from 'react-router-dom';
+import styles from './NorFound.module.css';
 
 const NotFound = () => {
+  const navigate = useNavigate();
   return (
     <div className={styles.error_page}>
       <h1>Oops, this page is not found</h1>
-      <button>
-        <Link className={styles.link} to={'/'}>
-          Go back
-        </Link>
+      <button className={styles.link} onClick={() => navigate('/')}>
+        Go back
       </button>
     </div>
   );

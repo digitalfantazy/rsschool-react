@@ -1,22 +1,31 @@
-// src/components/Pagination/Pagination.tsx
 import React from 'react';
 
+import styles from './Pagination.module.css';
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  ChangePage: (page: number) => void;
+  setCurrentPage: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  ChangePage,
+  setCurrentPage,
+}) => {
+  const pagesQuantity = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="pagination">
-      {pages.map((page) => (
+    <div className={styles.pagination}>
+      {pagesQuantity.map((page) => (
         <button
           key={page}
-          onClick={() => onPageChange(page)}
-          className={page === currentPage ? 'active' : ''}
+          onClick={() => {
+            setCurrentPage(page);
+            ChangePage(page);
+          }}
+          className={page === currentPage ? styles.active : ''}
         >
           {page}
         </button>

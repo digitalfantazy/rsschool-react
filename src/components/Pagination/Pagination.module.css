@@ -1,0 +1,12 @@
+.pagination {
+  position: absolute;
+  top: 875px;
+}
+
+.pagination button {
+  margin: 3px;
+}
+
+.active {
+  border-color: aliceblue;
+}
