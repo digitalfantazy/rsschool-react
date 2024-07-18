@@ -1,0 +1,23 @@
+.container {
+  max-width: 1500px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container h1 {
+  text-align: center;
+  margin: 20px auto;
+}
+
+.mainContent {
+  display: flex;
+  width: 100%;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.mainContent.shifted {
+  transform: translateX(-2%);
+}

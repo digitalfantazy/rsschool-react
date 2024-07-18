@@ -1,14 +1,12 @@
 import React from 'react';
-import './loading.css';
+import styles from './loading.module.css';
 
-class Loading extends React.Component {
-  render() {
-    return (
-      <div className="loader-сontainer">
-        <div className="loader" />
-      </div>
-    );
-  }
-}
+const Loading: React.FC = () => {
+  return (
+    <div className={styles.loader_сontainer} role="progressbar">
+      <div className={styles.loader} />
+    </div>
+  );
+};
 
 export default Loading;
