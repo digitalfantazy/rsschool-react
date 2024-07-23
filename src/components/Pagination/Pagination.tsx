@@ -1,59 +1,86 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { AppDispatch, RootState } from '../../store/store';
 import styles from './Pagination.module.css';
+import { useGetAllRecipesQuery } from '../../api/recipeApi';
+import { setCurrentPage, setTotalPages } from '../../store/slices/paginationSlice';
+
 interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  ChangePage: (page: number) => void;
-  setCurrentPage: (page: number) => void;
-  setIsDetailsOpen: (isOpen: boolean) => void;
+  page: number;
+  searchQuery: string;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
-  currentPage,
-  totalPages,
-  ChangePage,
-  setCurrentPage,
-  setIsDetailsOpen,
-}) => {
+const Pagination: React.FC<PaginationProps> = ({ page, searchQuery }) => {
+  const { data } = useGetAllRecipesQuery({ query: searchQuery, page });
+
+  // const qu = `getAllRecipes({"page":${page},"query":"${query}"})`;
+  // const total = useSelector((state: RootState) => state.recipeApi.queries[qu]?.data?.total);
+  // console.log(total);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const currentPage = useSelector((state: RootState) => state.pagination.currentPage);
+  const totalPages = useSelector((state: RootState) => state.pagination.totalPages);
+
   const pagesQuantity = Array.from({ length: totalPages }, (_, i) => i + 1);
 
+  useEffect(() => {
+    if (data) {
+      dispatch(setTotalPages(Math.ceil(data.total / 10)));
+    }
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    dispatch(setCurrentPage(page));
+  }, [data, dispatch, searchParams]);
+
+  const handlePageChange = (page: number) => {
+    dispatch(setCurrentPage(page));
+    setSearchParams({
+      page: page.toString(),
+      search: searchQuery,
+    });
+    navigate(`/?page=${page}&search=${searchQuery}`);
+  };
+
   return (
-    <div className={styles.pagination}>
-      <button
-        disabled={currentPage === 1}
-        onClick={() => {
-          setCurrentPage(currentPage - 1);
-          ChangePage(currentPage - 1);
-          setIsDetailsOpen(false);
-        }}
-      >
-        Prev
-      </button>
-      {pagesQuantity.map((page) => (
-        <button
-          key={page}
-          onClick={() => {
-            setCurrentPage(page);
-            ChangePage(page);
-            setIsDetailsOpen(false);
-          }}
-          className={page === currentPage ? styles.active : ''}
-        >
-          {page}
-        </button>
-      ))}
-      <button
-        disabled={currentPage === totalPages}
-        onClick={() => {
-          setCurrentPage(currentPage + 1);
-          ChangePage(currentPage + 1);
-          setIsDetailsOpen(false);
-        }}
-      >
-        Next
-      </button>
-    </div>
+    <>
+      {totalPages > 1 ? (
+        <div className={styles.pagination}>
+          <button
+            disabled={currentPage === 1}
+            onClick={() => {
+              handlePageChange(currentPage - 1);
+            }}
+          >
+            Prev
+          </button>
+          {pagesQuantity.map((page) => (
+            <button
+              key={page}
+              onClick={() => {
+                handlePageChange(page);
+              }}
+              className={page === currentPage ? styles.active : ''}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => {
+              handlePageChange(currentPage + 1);
+            }}
+          >
+            Next
+          </button>
+        </div>
+      ) : (
+        ''
+      )}
+    </>
   );
 };
 
