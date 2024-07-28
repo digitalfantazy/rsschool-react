@@ -46,6 +46,10 @@ const routes: RouteObject[] = [
     path: 'details/:id',
     element: <RecipeDetails />,
   },
+  {
+    path: '*',
+    element: <div>Not Found</div>, // Add a catch-all route to handle 404 errors
+  },
 ];
 
 const renderWithRouter = (route: string) => {

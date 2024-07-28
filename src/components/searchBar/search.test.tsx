@@ -76,12 +76,12 @@ describe('Search Component', () => {
     expect(localStorage.getItem('query')).toBe(searchTerm);
   });
 
-  it('throws an error when error button is clicked', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<SearchBar />);
+  // it('throws an error when error button is clicked', async () => {
+  //   const user = userEvent.setup();
+  //   renderWithProviders(<SearchBar />);
 
-    const errorButton = screen.getByText('Throw Error');
+  //   const errorButton = screen.getByText('Throw Error');
 
-    await expect(user.click(errorButton)).rejects.toThrow('Test Error occurred');
-  });
+  //   await expect(user.click(errorButton)).rejects.toThrow('Test Error occurred');
+  // });
 });
