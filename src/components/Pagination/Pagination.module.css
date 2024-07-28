@@ -1,6 +1,6 @@
 .pagination {
   position: absolute;
-  top: 875px;
+  top: 920px;
 }
 
 .pagination button {
@@ -8,5 +8,12 @@
 }
 
 .active {
-  border-color: aliceblue;
+  border-color: var(--button-hover-color);
+}
+
+.disabled {
+  color: var(--disabled-color);
+  background-color: var(--disabled-backgorund-color);
+  cursor: not-allowed;
+  pointer-events: none;
 }

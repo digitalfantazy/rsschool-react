@@ -1,22 +1,22 @@
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../store/store';
 
-import { setCurrentPage } from '../../store/slices/paginationSlice';
+// import { setCurrentPage } from '../../store/slices/pagination.slice';
 import useSearchQuery from '../../hooks/useSearchQuery';
 import Pagination from '../Pagination/Pagination';
 
-import './searchbar.css';
+import styles from './searchbar.module.css';
+import { useActions } from '../../hooks/useActions';
+import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 
 const SearchBar: React.FC = () => {
   const [query, setQuery] = useSearchQuery('query', '');
   const [error, setError] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  const { setCurrentPage } = useActions();
 
   const page = parseInt(searchParams.get('page') || '1', 10);
   const searchQuery = searchParams.get('search') || '';
@@ -28,12 +28,12 @@ const SearchBar: React.FC = () => {
   const handleSearch = (): void => {
     const queryTrim = query.trim();
     setQuery(queryTrim);
-    dispatch(setCurrentPage(1));
+    setCurrentPage(1);
     setSearchParams({
       page: '1',
       search: queryTrim,
     });
-    localStorage.setItem('searchString', queryTrim);
+    localStorage.setItem('query', queryTrim);
     navigate(`/?page=1&search=${queryTrim}`);
   };
 
@@ -52,11 +52,12 @@ const SearchBar: React.FC = () => {
   }
   return (
     <>
-      <div className="search-bar">
+      <div className={styles.search_bar}>
         <input
           type="text"
           placeholder="Search"
           value={query}
+          className={styles.search_bar_input}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
@@ -64,14 +65,11 @@ const SearchBar: React.FC = () => {
           Search
         </button>
         <button onClick={handleError}>Throw Error</button>
+        <ThemeSwitcher />
       </div>
-      <Pagination page={page} searchQuery={searchQuery}></Pagination>
+      <Pagination page={page} searchQuery={searchQuery} />
     </>
   );
-};
-
-SearchBar.propTypes = {
-  setIsDetailsOpen: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

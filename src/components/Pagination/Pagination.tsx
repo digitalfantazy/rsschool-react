@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { AppDispatch, RootState } from '../../store/store';
-import styles from './Pagination.module.css';
 import { useGetAllRecipesQuery } from '../../api/recipeApi';
-import { setCurrentPage, setTotalPages } from '../../store/slices/paginationSlice';
+import { useActions } from '../../hooks/useActions';
+import { useAppSelector } from '../../hooks/useAppSelector';
+
+import styles from './Pagination.module.css';
 
 interface PaginationProps {
   page: number;
@@ -15,29 +15,27 @@ interface PaginationProps {
 const Pagination: React.FC<PaginationProps> = ({ page, searchQuery }) => {
   const { data } = useGetAllRecipesQuery({ query: searchQuery, page });
 
+  const { setCurrentPage, setTotalPages } = useActions();
+  const { totalPages, currentPage } = useAppSelector((state) => state.pagination);
+
   // const qu = `getAllRecipes({"page":${page},"query":"${query}"})`;
   // const total = useSelector((state: RootState) => state.recipeApi.queries[qu]?.data?.total);
   // console.log(total);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
-  const currentPage = useSelector((state: RootState) => state.pagination.currentPage);
-  const totalPages = useSelector((state: RootState) => state.pagination.totalPages);
 
   const pagesQuantity = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   useEffect(() => {
     if (data) {
-      dispatch(setTotalPages(Math.ceil(data.total / 10)));
+      setTotalPages(Math.ceil(data.total / 10));
     }
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    dispatch(setCurrentPage(page));
-  }, [data, dispatch, searchParams]);
+    setCurrentPage(page);
+  }, [data, searchParams, page, setCurrentPage, setTotalPages]);
 
   const handlePageChange = (page: number) => {
-    dispatch(setCurrentPage(page));
+    setCurrentPage(page);
     setSearchParams({
       page: page.toString(),
       search: searchQuery,
@@ -50,10 +48,11 @@ const Pagination: React.FC<PaginationProps> = ({ page, searchQuery }) => {
       {totalPages > 1 ? (
         <div className={styles.pagination}>
           <button
-            disabled={currentPage === 1}
+            className={currentPage === 1 ? styles.disabled : ''}
             onClick={() => {
               handlePageChange(currentPage - 1);
             }}
+            disabled={currentPage === 1}
           >
             Prev
           </button>
@@ -69,10 +68,11 @@ const Pagination: React.FC<PaginationProps> = ({ page, searchQuery }) => {
             </button>
           ))}
           <button
-            disabled={currentPage === totalPages}
+            className={currentPage === totalPages ? styles.disabled : ''}
             onClick={() => {
               handlePageChange(currentPage + 1);
             }}
+            disabled={currentPage === totalPages}
           >
             Next
           </button>

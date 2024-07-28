@@ -1,42 +1,48 @@
 import React from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { useGetRecipesDetailsQuery } from '../../api/recipeApi';
-import Loading from '../loading/loading';
+import Loading from '../Loading/loading';
 import styles from './RecipeDetails.module.css';
-import { RootState } from '../../store/store';
-import { openDetails } from '../../store/slices/openDetailsSlice';
+import { useActions } from '../../hooks/useActions';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import Favorite from '../Favourite/Favourite';
 
 const RecipeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [urlParams] = useSearchParams();
   const query = urlParams.get('search');
   const page = urlParams.get('page');
 
-  const isDetailsOpen = useSelector((state: RootState) => state.openDetails.isOpen);
+  const { closeDetails } = useActions();
+  const { isOpen } = useAppSelector((state) => state.openDetails);
 
   const { data, isError, isFetching, isLoading } = useGetRecipesDetailsQuery(id as string);
 
   const handleClose = () => {
-    dispatch(openDetails());
+    closeDetails();
     navigate(`/?page=${page}&search=${query}`);
   };
 
   return (
     <>
       <div className={styles.background} onClick={handleClose}></div>
-      {isDetailsOpen && (
-        <div className={`${styles.recipe_details} ${isDetailsOpen ? styles.open : ''}`}>
+      {isOpen && (
+        <div className={`${styles.recipe_details} ${isOpen ? styles.open : ''}`}>
           {isError && <p>Failed to load data</p>}
           {isLoading || isFetching ? (
             <Loading />
           ) : data ? (
             <>
               <div className={styles.details}>
+                <Favorite
+                  id={data.id}
+                  name={data.name}
+                  ingredients={data.ingredients}
+                  instructions={data.instructions}
+                />
                 <img
                   src={data.image}
                   className={styles.image}

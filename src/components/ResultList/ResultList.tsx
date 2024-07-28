@@ -1,26 +1,27 @@
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+
+import Loading from '../Loading/loading';
+import Favorite from '../Favourite/Favourite';
 
 import { useGetAllRecipesQuery } from '../../api/recipeApi';
-import Loading from '../loading/loading';
 
 import styles from './ResultList.module.css';
-import { RootState } from '../../store/store';
-import { openDetails } from '../../store/slices/openDetailsSlice';
+import { useActions } from '../../hooks/useActions';
+import { useAppSelector } from '../../hooks/useAppSelector';
 
 const ResultsList: React.FC = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const query = urlParams.get('search') || '';
   const page = parseInt(urlParams.get('page') || '1', 10);
 
-  const dispatch = useDispatch();
-  const isDetailsOpen = useSelector((state: RootState) => state.openDetails.isOpen);
+  const { openDetails } = useActions();
+  const { isOpen } = useAppSelector((state) => state.openDetails);
 
   const { data, isError, isFetching, isLoading } = useGetAllRecipesQuery({ query, page });
   const recipes = data?.recipes;
 
   return (
-    <div className={`${styles.content} ${isDetailsOpen ? styles.open : ''}`}>
+    <div className={`${styles.content} ${isOpen ? styles.open : ''}`}>
       <div className={styles.results}>
         <ul className={styles.results_list}>
           {isError && <p>Failed to load data</p>}
@@ -29,10 +30,16 @@ const ResultsList: React.FC = () => {
           ) : recipes && recipes.length > 0 ? (
             recipes.map((item) => (
               <li className={styles.results_item} key={item.id}>
+                <Favorite
+                  id={item.id}
+                  name={item.name}
+                  ingredients={item.ingredients}
+                  instructions={item.instructions}
+                />
                 <Link
                   to={`/details/${item.id}?page=${page}&search=${query}`}
                   className={styles.link}
-                  onClick={() => dispatch(openDetails())}
+                  onClick={() => openDetails()}
                 >
                   <img src={item.image} alt="dish-image" width={150} height={150} />
                   <h3>{item.name}</h3>

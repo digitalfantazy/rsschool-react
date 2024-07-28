@@ -1,38 +1,46 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import SearchBar from './components/searchBar/SearchBar';
+import SearchBar from './components/SearchBar/SearchBar';
 import ResultsList from './components/ResultList/ResultList';
-import ErrorBoundary from './components/errorBoundary/ErrorBoundary';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
 import styles from './App.module.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { closeDetails, openDetails } from './store/slices/openDetailsSlice';
-import { RootState } from './store/store';
+import { useActions } from './hooks/useActions';
+import { useAppSelector } from './hooks/useAppSelector';
+import Flyout from './components/Flyout/Flyout';
+import { ThemeContext } from './providers/ThemeProvider';
 
 const App: React.FC = () => {
   const location = useLocation();
-  const dispatch = useDispatch();
-  const isDetailsOpen = useSelector((state: RootState) => state.openDetails.isOpen);
+
+  const { openDetails, closeDetails } = useActions();
+  const { isOpen } = useAppSelector((state) => state.openDetails);
+
+  const themeContext = useContext(ThemeContext);
+  const theme = themeContext ? themeContext.isLightTheme : false;
 
   useEffect(() => {
     if (location.pathname.includes('/details/')) {
-      dispatch(openDetails());
+      openDetails();
     } else {
-      dispatch(closeDetails());
+      closeDetails();
     }
-  }, [location, dispatch]);
+  }, [location]);
 
   return (
-    <div className={styles.container}>
-      <ErrorBoundary>
+    <main className={theme ? styles.lightTheme : styles.darkTheme}>
+      <div className={styles.container}>
         <h1>Recipes</h1>
-        <SearchBar />
-        <div className={`${styles.mainContent} ${isDetailsOpen ? styles.shifted : ''}`}>
-          <ResultsList />
-          <Outlet />
-        </div>
-      </ErrorBoundary>
-    </div>
+        <ErrorBoundary>
+          <SearchBar />
+          <div className={`${styles.mainContent} ${isOpen ? styles.shifted : ''}`}>
+            <ResultsList />
+            <Outlet />
+          </div>
+          <Flyout />
+        </ErrorBoundary>
+      </div>
+    </main>
   );
 };
 
