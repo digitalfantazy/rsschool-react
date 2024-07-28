@@ -1,3 +1,39 @@
+main {
+  height: 1370px;
+  background: var(--main-background-color);
+}
+
+h1 {
+  color: var(--text-color);
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+input {
+  color: var(--text-color);
+  background-color: var(--input-backgound-color);
+}
+
+p {
+  color: var(--text-color);
+}
+
+button {
+  color: var(--text-color);
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--button-background-color);
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: var(--button-hover-color);
+}
+
 .container {
   max-width: 1500px;
   margin: auto;
@@ -20,4 +56,26 @@
 
 .mainContent.shifted {
   transform: translateX(-2%);
+}
+
+.lightTheme {
+  --main-background-color: #d3d3d3;
+  --text-color: #242424;
+  --input-backgound-color: #fcfcfc;
+  --button-background-color: #ffffff;
+  --button-hover-color: #1a1a1a;
+  --cards-background-color: #f6f6f6;
+  --disabled-color: #585858;
+  --disabled-backgorund-color: #949494;
+}
+
+.darkTheme {
+  --main-background-color: #242424;
+  --text-color: rgba(255, 255, 255, 0.87);
+  --input-backgound-color: #444242;
+  --button-background-color: #1a1a1a;
+  --button-hover-color: aliceblue;
+  --cards-background-color: #414040;
+  --disabled-color: #717171;
+  --disabled-backgorund-color: #363535;
 }

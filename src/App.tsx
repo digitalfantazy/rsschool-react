@@ -1,70 +1,46 @@
-import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import SearchBar from './components/searchBar/SearchBar';
+import { useContext, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import SearchBar from './components/SearchBar/SearchBar';
 import ResultsList from './components/ResultList/ResultList';
-import ErrorBoundary from './components/errorBoundary/ErrorBoundary';
-import Loading from './components/loading/loading';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 
-import { IRecipe } from './types/RecipeTypes';
-import { getAllRecipes } from './api/getRecipesAPI';
-import { limit } from './api/getRecipesAPI';
 import styles from './App.module.css';
+import { useActions } from './hooks/useActions';
+import { useAppSelector } from './hooks/useAppSelector';
+import Flyout from './components/Flyout/Flyout';
+import { ThemeContext } from './providers/ThemeProvider';
 
 const App: React.FC = () => {
-  const getPage = () => {
-    const params = new URLSearchParams(location.search);
-    return parseInt(params.get('page') || '');
-  };
+  const location = useLocation();
 
-  const [recipes, setRecipes] = useState<IRecipe[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(getPage);
-  const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
+  const { openDetails, closeDetails } = useActions();
+  const { isOpen } = useAppSelector((state) => state.openDetails);
 
-  const getRecipes = async (query: string, page: number) => {
-    setLoading(true);
-    const data = await getAllRecipes(query, page);
-    setTotalPages(Math.ceil(data.total / limit));
-    setRecipes(data.recipes);
-    setLoading(false);
-  };
+  const themeContext = useContext(ThemeContext);
+  const theme = themeContext ? themeContext.isLightTheme : false;
 
   useEffect(() => {
     if (location.pathname.includes('/details/')) {
-      setIsDetailsOpen(true);
+      openDetails();
     } else {
-      setIsDetailsOpen(false);
+      closeDetails();
     }
   }, [location]);
 
   return (
-    <div className={styles.container}>
-      <ErrorBoundary>
+    <main className={theme ? styles.lightTheme : styles.darkTheme}>
+      <div className={styles.container}>
         <h1>Recipes</h1>
-        <SearchBar
-          getRecipes={getRecipes}
-          totalPages={totalPages}
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
-          setIsDetailsOpen={setIsDetailsOpen}
-        />
-        <div className={`${styles.mainContent} ${isDetailsOpen ? styles.shifted : ''}`}>
-          {loading ? (
-            <Loading />
-          ) : (
-            <>
-              <ResultsList
-                results={recipes}
-                setIsDetailsOpen={setIsDetailsOpen}
-                isDetailsOpen={isDetailsOpen}
-              />
-            </>
-          )}
-          <Outlet context={{ isDetailsOpen, setIsDetailsOpen }} />
-        </div>
-      </ErrorBoundary>
-    </div>
+        <ErrorBoundary>
+          <SearchBar />
+          <div className={`${styles.mainContent} ${isOpen ? styles.shifted : ''}`}>
+            <ResultsList />
+            <Outlet />
+          </div>
+          <Flyout />
+        </ErrorBoundary>
+      </div>
+    </main>
   );
 };
 

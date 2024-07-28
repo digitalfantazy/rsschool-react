@@ -21,12 +21,17 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   componentDidCatch(error: Error, info: ErrorInfo): void {
     console.error('Error caught by ErrorBoundary: ', error, info);
   }
+
+  handleTryAgain = () => {
+    this.setState({ hasError: false });
+  };
+
   render() {
     if (this.state.hasError) {
       return (
         <div className="error-boundary">
           <h1>Oops.... Something went wrong.</h1>
-          <button onClick={() => this.setState({ hasError: false })}>Try again</button>
+          <button onClick={this.handleTryAgain}>Try again</button>
         </div>
       );
     }

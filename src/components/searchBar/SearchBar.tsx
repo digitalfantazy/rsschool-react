@@ -1,41 +1,25 @@
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import useSearchQuery from '../../hooks/useSearchQuery';
+import { ChangeEvent, KeyboardEvent, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
+// import { setCurrentPage } from '../../store/slices/pagination.slice';
+import useSearchQuery from '../../hooks/useSearchQuery';
 import Pagination from '../Pagination/Pagination';
-import './searchbar.css';
-import { useSearchParams } from 'react-router-dom';
-interface SearchBarProps {
-  getRecipes: (query: string, page: number) => void;
-  totalPages: number;
-  setCurrentPage: (page: number) => void;
-  currentPage: number;
-  setIsDetailsOpen: (isOpen: boolean) => void;
-}
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  getRecipes,
-  totalPages,
-  setCurrentPage,
-  currentPage,
-  setIsDetailsOpen,
-}) => {
+import styles from './searchbar.module.css';
+import { useActions } from '../../hooks/useActions';
+import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
+
+const SearchBar: React.FC = () => {
   const [query, setQuery] = useSearchQuery('query', '');
   const [error, setError] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
-
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const pageParam = searchParams.get('page');
-    setCurrentPage(Number(pageParam));
-    setSearchParams({
-      page: currentPage.toString(),
-      search: query,
-    });
-    getRecipes(query, currentPage);
-  }, []);
+  const { setCurrentPage } = useActions();
+
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const searchQuery = searchParams.get('search') || '';
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
@@ -46,27 +30,17 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setQuery(queryTrim);
     setCurrentPage(1);
     setSearchParams({
-      page: currentPage.toString(),
+      page: '1',
       search: queryTrim,
     });
-    localStorage.setItem('searchString', queryTrim);
-    getRecipes(queryTrim, currentPage);
+    localStorage.setItem('query', queryTrim);
+    navigate(`/?page=1&search=${queryTrim}`);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       handleSearch();
     }
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    setSearchParams({
-      page: page.toString(),
-      search: query,
-    });
-    getRecipes(query, page);
-    navigate(`/?page=${page}&search=${query}`);
   };
 
   const handleError = () => {
@@ -78,11 +52,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
   }
   return (
     <>
-      <div className="search-bar">
+      <div className={styles.search_bar}>
         <input
           type="text"
           placeholder="Search"
           value={query}
+          className={styles.search_bar_input}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
@@ -90,26 +65,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
           Search
         </button>
         <button onClick={handleError}>Throw Error</button>
+        <ThemeSwitcher />
       </div>
-      {totalPages > 1 && (
-        <Pagination
-          setCurrentPage={setCurrentPage}
-          ChangePage={handlePageChange}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          setIsDetailsOpen={setIsDetailsOpen}
-        ></Pagination>
-      )}
+      <Pagination page={page} searchQuery={searchQuery} />
     </>
   );
-};
-
-SearchBar.propTypes = {
-  getRecipes: PropTypes.func.isRequired,
-  totalPages: PropTypes.number.isRequired,
-  setCurrentPage: PropTypes.func.isRequired,
-  currentPage: PropTypes.number.isRequired,
-  setIsDetailsOpen: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

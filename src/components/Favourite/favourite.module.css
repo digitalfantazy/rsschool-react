@@ -1,0 +1,30 @@
+.favorite {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.favouriteButton {
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s ease;
+}
+
+.favoriteButton:hover {
+  transform: scale(2);
+}
+
+.favouriteButton.checked {
+  color: green;
+}
+
+.favouriteButton:not(.checked) {
+  color: grey;
+}
+
+.favouriteButton:active {
+  transform: scale(2);
+}

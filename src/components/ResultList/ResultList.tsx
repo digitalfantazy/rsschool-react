@@ -1,31 +1,45 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { IRecipe } from '../../types/RecipeTypes';
-import PropTypes from 'prop-types';
+import Loading from '../Loading/loading';
+import Favorite from '../Favourite/Favourite';
+
+import { useGetAllRecipesQuery } from '../../api/recipeApi';
+
 import styles from './ResultList.module.css';
+import { useActions } from '../../hooks/useActions';
+import { useAppSelector } from '../../hooks/useAppSelector';
 
-interface ResultsListProps {
-  results: IRecipe[];
-  setIsDetailsOpen: (isOpen: boolean) => void;
-  isDetailsOpen: boolean;
-}
-
-const ResultsList: React.FC<ResultsListProps> = ({ results, setIsDetailsOpen, isDetailsOpen }) => {
-  const [urlParams] = useSearchParams();
+const ResultsList: React.FC = () => {
+  const urlParams = new URLSearchParams(window.location.search);
   const query = urlParams.get('search') || '';
-  const page = urlParams.get('page') || '';
+  const page = parseInt(urlParams.get('page') || '1', 10);
+
+  const { openDetails } = useActions();
+  const { isOpen } = useAppSelector((state) => state.openDetails);
+
+  const { data, isError, isFetching, isLoading } = useGetAllRecipesQuery({ query, page });
+  const recipes = data?.recipes;
 
   return (
-    <div className={`${styles.content} ${isDetailsOpen ? styles.open : ''}`}>
+    <div className={`${styles.content} ${isOpen ? styles.open : ''}`}>
       <div className={styles.results}>
         <ul className={styles.results_list}>
-          {results.length > 0 ? (
-            results.map((item) => (
+          {isError && <p>Failed to load data</p>}
+          {isFetching || isLoading ? (
+            <Loading />
+          ) : recipes && recipes.length > 0 ? (
+            recipes.map((item) => (
               <li className={styles.results_item} key={item.id}>
+                <Favorite
+                  id={item.id}
+                  name={item.name}
+                  ingredients={item.ingredients}
+                  instructions={item.instructions}
+                />
                 <Link
                   to={`/details/${item.id}?page=${page}&search=${query}`}
                   className={styles.link}
-                  onClick={() => setIsDetailsOpen(true)}
+                  onClick={() => openDetails()}
                 >
                   <img src={item.image} alt="dish-image" width={150} height={150} />
                   <h3>{item.name}</h3>
@@ -42,12 +56,6 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, setIsDetailsOpen, is
       </div>
     </div>
   );
-};
-
-ResultsList.propTypes = {
-  results: PropTypes.array.isRequired,
-  setIsDetailsOpen: PropTypes.func.isRequired,
-  isDetailsOpen: PropTypes.bool.isRequired,
 };
 
 export default ResultsList;

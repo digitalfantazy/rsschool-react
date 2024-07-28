@@ -3,6 +3,8 @@ export interface IRecipe {
   name: string;
   difficulty: string;
   caloriesPerServing: number;
+  ingredients: string[];
+  instructions: string[];
   image: string;
   rating: number;
 }
