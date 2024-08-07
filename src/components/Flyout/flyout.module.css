@@ -1,0 +1,48 @@
+.flyout {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 10px 20px 20px 20px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+  background-color: var(--cards-background-color);
+  border-radius: 5px 5px 0 0;
+  transition:
+    transform 0.3s ease-in-out,
+    bottom 0.3s ease-in-out;
+}
+
+.hidden {
+  transform: translateY(calc(100% - 40px));
+}
+
+.hideButton {
+  background-color: var(--cards-background-color) !important;
+  padding: 0 !important;
+  margin: 0 0 0 200px !important;
+  border: none;
+}
+
+.hideButton:hover {
+  text-decoration: underline;
+  border: none;
+}
+.flyout button {
+  padding: 10px 20px;
+  margin-left: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.funcButton {
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.flyout button:hover {
+  border-color: var(--button-hover-color);
+}
+
+.flyout p {
+  text-align: center;
+  margin: 10px;
+  font-size: 16px;
+}
