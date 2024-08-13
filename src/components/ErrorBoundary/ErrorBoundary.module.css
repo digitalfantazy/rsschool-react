@@ -1,9 +1,0 @@
-.errorBoundary {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.errorBoundary button {
-  width: 150px;
-}
