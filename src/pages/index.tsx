@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 
@@ -12,15 +12,17 @@ import { useActions } from '../hooks/useActions';
 import { useAppSelector } from '../hooks/useAppSelector';
 import styles from '../styles/Home.module.css';
 import RecipeDetails from '../components/RecipeDetails/RecipeDetails';
+import { IRecipeData, IRecipeDetails } from '../types/RecipeTypes';
 
 interface HomeProps {
-  initialData: [];
+  data: IRecipeData;
   query: string;
   page: number;
 }
 
-const Home: React.FC<HomeProps> = ({ initialData, query, page }) => {
+const Home: React.FC<HomeProps> = ({ data, query, page }) => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const { openDetails, closeDetails } = useActions();
   const { isOpen } = useAppSelector((state) => state.openDetails);
@@ -33,7 +35,6 @@ const Home: React.FC<HomeProps> = ({ initialData, query, page }) => {
 
   useEffect(() => {
     if (router.query.details) {
-      console.log(router.query.details);
       openDetails();
     } else {
       closeDetails();
@@ -54,8 +55,10 @@ const Home: React.FC<HomeProps> = ({ initialData, query, page }) => {
           <ErrorBoundary>
             <SearchBar />
             <div className={`${styles.mainContent} ${isOpen ? styles.shifted : ''}`}>
-              <ResultsList initialData={initialData} query={query} page={page} />
-              {isOpen && <RecipeDetails id={router.query.details as string} />}
+              <ResultsList recipes={data.recipes} query={query} page={page} />
+              {isOpen && (
+                <RecipeDetails id={router.query.details as string} recipes={data.recipes} />
+              )}
             </div>
             <Flyout />
           </ErrorBoundary>
@@ -67,19 +70,30 @@ const Home: React.FC<HomeProps> = ({ initialData, query, page }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { page = 1, query = '' } = context.query;
-  //   details = ''
-  const response = await fetch(
-    `https://dummyjson.com/recipes/search?q=${query}&limit=${10}&skip=${(Number(page) - 1) * 10}`,
-  );
-  const data = await response.json();
 
-  return {
-    props: {
-      page: Number(page),
-      initialData: data,
-      query: query as string,
-    },
-  };
+  try {
+    const response = await fetch(
+      `https://dummyjson.com/recipes/search?q=${query}&limit=${10}&skip=${(Number(page) - 1) * 10}`,
+    );
+    const data = await response.json();
+
+    return {
+      props: {
+        page: Number(page),
+        data,
+        query: query as string,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        page: Number(page),
+        data: { recipes: [], limit: 0, skip: 0, total: 0 },
+        query: query as string,
+      },
+    };
+  }
 };
 
 export default Home;

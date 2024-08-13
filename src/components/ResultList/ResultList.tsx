@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
@@ -8,13 +7,14 @@ import Favorite from '../Favourite/Favourite';
 import styles from './ResultList.module.css';
 import { useActions } from '../../hooks/useActions';
 import { useAppSelector } from '../../hooks/useAppSelector';
+import { IRecipe } from '../../types/RecipeTypes';
 
 interface ResultsListProps {
-  initialData: [];
+  recipes: IRecipe[];
   query: string;
   page: number;
 }
-const ResultsList: React.FC<ResultsListProps> = ({ initialData, page, query }) => {
+const ResultsList: React.FC<ResultsListProps> = ({ recipes }) => {
   const router = useRouter();
 
   const { openDetails } = useActions();
@@ -31,7 +31,6 @@ const ResultsList: React.FC<ResultsListProps> = ({ initialData, page, query }) =
       { shallow: true },
     );
   };
-  const recipes = initialData.recipes;
 
   return (
     <div className={`${styles.content} ${isOpen ? styles.open : ''}`}>
@@ -50,11 +49,7 @@ const ResultsList: React.FC<ResultsListProps> = ({ initialData, page, query }) =
                   ingredients={item.ingredients}
                   instructions={item.instructions}
                 />
-                <Link
-                  href={`/details/${item.id}?page=${page}&search=${query}`}
-                  className={styles.link}
-                  onClick={() => handleLinkClick(item.id)}
-                >
+                <div className={styles.link} onClick={() => handleLinkClick(item.id)}>
                   <Image
                     src={item.image}
                     alt="dish-image"
@@ -66,7 +61,7 @@ const ResultsList: React.FC<ResultsListProps> = ({ initialData, page, query }) =
                   <p>Calories: {item.caloriesPerServing}</p>
                   <p>Difficulty: {item.difficulty}</p>
                   <p>Rating: {item.rating}</p>
-                </Link>
+                </div>
               </li>
             ))
           ) : (
