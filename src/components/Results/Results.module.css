@@ -1,0 +1,37 @@
+.resultContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: rgba(0, 0, 255, 0.087);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.result {
+  margin: 10px 20px 20px 10px;
+  background-color: rgba(83, 83, 235, 0.428);
+  width: 320px;
+  padding: 10px;
+  color: white;
+  border-radius: 5px;
+}
+
+.result p {
+  color: black;
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.result img {
+  border-radius: 5px;
+  width: 250px;
+  padding: 10px;
+  color: white;
+  border-radius: 5px;
+}
+
+.highlight {
+  background-color: rgba(132, 0, 255, 0.297);
+  border: 2px solid rgb(195, 0, 255);
+}
