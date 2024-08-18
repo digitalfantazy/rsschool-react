@@ -1,0 +1,296 @@
+.container {
+  width: 600px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.back {
+  position: absolute;
+  left: 34%;
+  padding: 8px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #6200ea;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.back:hover {
+  background-color: #3700b3;
+}
+
+.header {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form {
+  width: 100%;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.formGroup label {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: large;
+  cursor: pointer;
+}
+
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: large;
+}
+
+input,
+select {
+  font-family: inherit;
+  padding: 8px;
+  font-size: 16px;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #bdbdbd;
+  border-radius: 0.25rem;
+  transition:
+    border-color 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
+}
+
+input[type='text']:focus,
+input[type='number']:focus,
+input[type='email']:focus,
+input[type='password']:focus,
+select:focus {
+  border-color: #6200ea;
+  box-shadow: 0 0 8px rgba(98, 0, 234, 0.6);
+  outline: none;
+}
+
+input[type='file'] {
+  padding: 0;
+  cursor: pointer;
+}
+
+.customFileInput {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: #f0f0f0;
+  border: 1px solid #bdbdbd;
+  border-radius: 0.25rem;
+  padding: 8px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.customFileInputError {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: #ffebee;
+  border: 1px solid red;
+  border-radius: 0.25rem;
+  padding: 8px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.customFileInput input[type='file'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+}
+
+.customFileInputError input[type='file'] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+}
+
+.customFileLabel {
+  padding: 8px 15px;
+  background-color: #6200ea;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.customFileInput:hover .customFileLabel {
+  background-color: #3700b3;
+}
+
+.fileName {
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-left: 5px;
+}
+
+.fileSizeWarning {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.suggestionsList,
+.suggestionsListError {
+  position: absolute;
+  border: 1px solid #ddd;
+  background: white;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+  list-style-type: none;
+  z-index: 1000;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.showList {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.suggestionsList li,
+.suggestionsListError li {
+  margin: 0;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestionsList li:hover,
+.suggestionsListError li:hover {
+  background: #f0f0f0;
+}
+
+input[type='checkbox'] {
+  display: none;
+}
+
+input[type='checkbox'] + span {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #6200ea;
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+  margin-right: 10px;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+input[type='checkbox']:checked + span {
+  background-color: #6200ea;
+  border-color: #6200ea;
+}
+
+input[type='checkbox'] + span::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  width: 8px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+input[type='checkbox']:checked + span::after {
+  opacity: 1;
+}
+
+.submitButton {
+  width: 100%;
+  text-align: center;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #6200ea;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submitButton:disabled {
+  width: 100%;
+  text-align: center;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #ad96cd;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background-color: #3700b3;
+}
+
+.submitButton:hover:disabled {
+  background-color: #ad96cd;
+}
+
+.errorInput {
+  border-color: red;
+  background-color: #ffebee;
+}
+
+.error {
+  color: #e57373;
+  font-size: 12px;
+  margin-top: 5px;
+  min-height: 18px;
+  line-height: 18px;
+}
